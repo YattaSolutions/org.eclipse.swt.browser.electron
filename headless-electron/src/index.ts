@@ -26,6 +26,10 @@ app.on('ready', () => {
 		client.write(dirtyRect.x + ',' + dirtyRect.y + ':' + image.crop(dirtyRect).toPNG().toString('base64') + '\n');
 	});
 
+	win.webContents.on('cursor-changed', (event, type) => {
+		client.write('cursor:' + type + '\n');
+	});
+
 	win.webContents.setWindowOpenHandler(() => {
 		return {
 			action: 'allow',

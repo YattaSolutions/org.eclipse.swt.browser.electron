@@ -14,6 +14,7 @@ import java.net.Socket;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -32,6 +33,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -206,11 +208,12 @@ class ElectronBrowserCanvas extends Canvas
          String line = null;
          while (!isDisposed() && (line = br.readLine()) != null)
          {
-            /*if ("getResize".equals(line))
+            if (line.startsWith("cursor:"))
             {
-               display.asyncExec(() -> sendResize(getBounds()));
+               String type = line.substring("cursor:".length());
+               display.asyncExec(() -> setCursor(type));
                continue;
-            }*/
+            }
             int index = line.indexOf(':');
             if (index > 0)
             {
@@ -395,6 +398,47 @@ class ElectronBrowserCanvas extends Canvas
       }
 
       sendMessage(type, Collections.singletonMap("keyCode", "\"" + keyCode + "\""));
+   }
+
+   private Map<String, Integer> cursorMapping;
+
+   private void setCursor(String type)
+   {
+      if (cursorMapping == null)
+      {
+         cursorMapping = new HashMap<>();
+         // col-resize, row-resize, m-panning, e-panning, n-panning, ne-panning, nw-panning, s-panning, se-panning, sw-panning, w-panning, move, vertical-text, cell, context-menu, alias, progress, nodrop, copy, not-allowed, zoom-in, zoom-out, grab, grabbing
+         cursorMapping.put("default", SWT.CURSOR_ARROW);
+         cursorMapping.put("crosshair", SWT.CURSOR_CROSS);
+         cursorMapping.put("pointer", SWT.CURSOR_HAND);
+         cursorMapping.put("text", SWT.CURSOR_IBEAM);
+         cursorMapping.put("wait", SWT.CURSOR_WAIT);
+         cursorMapping.put("help", SWT.CURSOR_HELP);
+         cursorMapping.put("e-resize", SWT.CURSOR_SIZEE);
+         cursorMapping.put("n-resize", SWT.CURSOR_SIZEN);
+         cursorMapping.put("ne-resize", SWT.CURSOR_SIZENE);
+         cursorMapping.put("nw-resize", SWT.CURSOR_SIZENW);
+         cursorMapping.put("s-resize", SWT.CURSOR_SIZES);
+         cursorMapping.put("se-resize", SWT.CURSOR_SIZESE);
+         cursorMapping.put("sw-resize", SWT.CURSOR_SIZESW);
+         cursorMapping.put("w-resize", SWT.CURSOR_SIZEW);
+         cursorMapping.put("ns-resize", SWT.CURSOR_SIZENS);
+         cursorMapping.put("ew-resize", SWT.CURSOR_SIZEWE);
+         cursorMapping.put("nesw-resize", SWT.CURSOR_SIZENESW);
+         cursorMapping.put("nwse-resize", SWT.CURSOR_SIZENWSE);
+         cursorMapping.put("none", SWT.CURSOR_NO);
+         //cursorMapping.put("", SWT.CURSOR_SIZEALL);
+      }
+      
+      Integer swtType = cursorMapping.get(type);
+      if (swtType == null)
+      {
+         System.out.println("Cursor not found:" + type);
+         swtType = SWT.CURSOR_ARROW;
+      }
+      
+      Cursor cursor = new Cursor(getDisplay(), swtType);
+      setCursor(cursor);
    }
 
    private Process process;

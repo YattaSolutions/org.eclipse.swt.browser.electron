@@ -6,7 +6,7 @@
 
    <groupId>de.yatta</groupId>
    <artifactId>browser.electron</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
+   <version>0.0.3-SNAPSHOT</version>
 
    <name>de.yatta.browser.electron</name>
    <description>Electron browser in SWT</description>
