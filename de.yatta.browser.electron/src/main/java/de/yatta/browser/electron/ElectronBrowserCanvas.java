@@ -151,7 +151,7 @@ class ElectronBrowserCanvas extends Canvas
          listen(9090);
       }).start();
 
-      //unzipAndStartElectron();
+      unzipAndStartElectron();
    }
 
    private ServerSocket server;
