@@ -72,6 +72,13 @@ app.on('ready', () => {
 				if (jsonObj?.type != 'mouseMove') {
 					win.focusOnWebView();
 				}
+				if (jsonObj?.type == 'char') {
+					let keyboardEvent = <KeyboardInputEvent> jsonObj;
+					// workaround for 'Enter' as described on https://github.com/electron/electron/issues/8977
+					if (keyboardEvent.keyCode == 'Return' || keyboardEvent.keyCode == 'Enter') {
+						keyboardEvent.keyCode = String.fromCharCode(0x0D);
+					}
+				}
 				win.webContents.sendInputEvent(<MouseInputEvent|MouseWheelInputEvent|KeyboardInputEvent> jsonObj);
 			}
 		});

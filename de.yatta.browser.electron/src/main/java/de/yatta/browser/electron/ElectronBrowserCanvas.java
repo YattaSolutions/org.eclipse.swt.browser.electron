@@ -322,7 +322,7 @@ class ElectronBrowserCanvas extends Canvas
       }
       else
       {
-         char c = '\0';
+         String c = null;
          switch (e.keyCode)
          {
             case 8:
@@ -333,13 +333,14 @@ class ElectronBrowserCanvas extends Canvas
                break;
             case 13:
                keyCode = "Return";
+               c = "Return";
                break;
             case 27:
                keyCode = "Escape";
                break;
             case 32:
                keyCode = "Space";
-               c = ' ';
+               c = " ";
                break;
             case SWT.ARROW_UP:
                keyCode = "Up";
@@ -367,7 +368,7 @@ class ElectronBrowserCanvas extends Canvas
                break;
             case SWT.KEYPAD_ADD:
                keyCode = "Plus";
-               c = '+';
+               c = "+";
                break;
             case SWT.KEYPAD_CR:
                keyCode = "Enter";
@@ -391,9 +392,9 @@ class ElectronBrowserCanvas extends Canvas
          }
          if ("char".equals(type))
          {
-            if (c == '\0')
+            if (c == null)
                return;
-            keyCode = Character.toString(c);
+            keyCode = c;
          }
       }
 
