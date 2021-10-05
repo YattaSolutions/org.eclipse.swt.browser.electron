@@ -2,18 +2,13 @@ package de.yatta.browser.electron;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Base64;
-import java.util.Base64.Decoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -217,7 +212,8 @@ class ElectronBrowserCanvas extends Canvas
             {
                String[] split = command.substring("paint:".length()).split(",");
                Point point = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-               Image image = new Image(display, new ByteArrayInputStream(readBytesFromInputStream(bufferedInputStream, Integer.parseInt(split[2]))));
+               //Image image = new Image(display, new ByteArrayInputStream(readBytesFromInputStream(bufferedInputStream, Integer.parseInt(split[2]))));
+               Image image = new Image(display, new PartialInputStream(bufferedInputStream, Integer.parseInt(split[2])));
                Rectangle bounds = image.getBounds();
                display.asyncExec(() -> { // TODO sync or async?
                   gc.drawImage(image, point.x, point.y);
@@ -239,12 +235,12 @@ class ElectronBrowserCanvas extends Canvas
       }
    }
    
-   private byte[] readBytesFromInputStream(final BufferedInputStream inputStream, final int numberOfBytes) throws IOException
+   private byte[] readBytesFromInputStream(final InputStream inputStream, final int numberOfBytes) throws IOException
    {
       int bytesToRead = numberOfBytes;
       int bytesRead = 0;
       byte[] bytes = new byte[numberOfBytes];
-      while (!isDisposed() && bytesToRead > 0 && (bytesRead = inputStream.read(bytes, numberOfBytes - bytesToRead, bytesToRead)) > -1)
+      while (bytesToRead > 0 && (bytesRead = inputStream.read(bytes, numberOfBytes - bytesToRead, bytesToRead)) > -1)
       {
          bytesToRead -= bytesRead;
       }
