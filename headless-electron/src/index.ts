@@ -55,14 +55,12 @@ app.on('ready', () => {
 	//win.webContents.beginFrameSubscription(true ,(image, dirtyRect) => {
 	win.webContents.on('paint', (event, dirtyRect, image) => {
 		const imageBytes: Buffer = image.crop(dirtyRect).toJPEG(100);
-		const command: string = ('paint:' + dirtyRect.x + ',' + dirtyRect.y + ',' + imageBytes.length).padEnd(32, ',');
-		client.write(command, 'utf-8');
+		writeCommand('paint:' + dirtyRect.x + ',' + dirtyRect.y + ',' + imageBytes.length);
 		client.write(imageBytes);
 	});
 
 	win.webContents.on('cursor-changed', (event, type) => {
-		const command: string = ('cursor:' + type).padEnd(32, ',');
-		client.write(command, 'utf-8');
+		writeCommand('cursor:' + type);
 	});
 
 	win.webContents.setWindowOpenHandler(() => {
@@ -120,3 +118,7 @@ app.on('ready', () => {
 	});
 	//}).listen(9091, 'localhost');
 });
+
+const writeCommand = (command: string): void => {
+	client.write(command.padEnd(32, ','), 'utf-8');
+}

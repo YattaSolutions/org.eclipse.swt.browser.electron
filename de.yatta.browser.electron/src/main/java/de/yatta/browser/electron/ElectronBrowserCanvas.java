@@ -206,20 +206,27 @@ class ElectronBrowserCanvas extends Canvas
             {
                String type = (command.substring("cursor:".length()).split(","))[0];
                display.asyncExec(() -> setCursor(type));
-               continue;
             }
             else if (command.startsWith("paint:"))
             {
                String[] split = command.substring("paint:".length()).split(",");
                Point point = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                //Image image = new Image(display, new ByteArrayInputStream(readBytesFromInputStream(bufferedInputStream, Integer.parseInt(split[2]))));
-               Image image = new Image(display, new PartialInputStream(bufferedInputStream, Integer.parseInt(split[2])));
-               Rectangle bounds = image.getBounds();
-               display.asyncExec(() -> { // TODO sync or async?
-                  gc.drawImage(image, point.x, point.y);
-                  redraw(point.x, point.y, bounds.width, bounds.height, false);
-                  image.dispose();
-               });
+               int numberOfImageBytes = Integer.parseInt(split[2]);
+               if (bufferedInputStream.available() <= numberOfImageBytes) 
+               {
+                  Image image = new Image(display, new PartialInputStream(bufferedInputStream, numberOfImageBytes));
+                  Rectangle bounds = image.getBounds();
+                  display.asyncExec(() -> { // TODO sync or async?
+                     gc.drawImage(image, point.x, point.y);
+                     redraw(point.x, point.y, bounds.width, bounds.height, false);
+                     image.dispose();
+                  });
+               }
+               else
+               {
+                  bufferedInputStream.skip(numberOfImageBytes);
+               }
             }
             else 
             {
