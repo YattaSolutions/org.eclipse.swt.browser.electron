@@ -23,11 +23,15 @@ app.on('ready', () => {
 
 	//win.webContents.beginFrameSubscription(true ,(image, dirtyRect) => {
 	win.webContents.on('paint', (event, dirtyRect, image) => {
-		client.write(dirtyRect.x + ',' + dirtyRect.y + ':' + image.crop(dirtyRect).toPNG().toString('base64') + '\n');
+		const imageBytes: Uint8Array = image.crop(dirtyRect).toJPEG(100).valueOf();
+		const command: string = ('paint:' + dirtyRect.x + ',' + dirtyRect.y + ',' + imageBytes.length).padEnd(32, ',');
+		client.write(command, 'utf-8');
+		client.write(imageBytes);
 	});
 
 	win.webContents.on('cursor-changed', (event, type) => {
-		client.write('cursor:' + type + '\n');
+		const command: string = ('cursor:' + type).padEnd(32, ',');
+		client.write(command, 'utf-8');
 	});
 
 	win.webContents.setWindowOpenHandler(() => {

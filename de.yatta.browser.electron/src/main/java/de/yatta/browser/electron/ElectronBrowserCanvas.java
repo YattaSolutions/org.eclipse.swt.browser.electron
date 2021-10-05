@@ -1,5 +1,6 @@
 package de.yatta.browser.electron;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -196,36 +197,37 @@ class ElectronBrowserCanvas extends Canvas
          System.out.println("Open connection");
          final Socket socket = server.accept();
          final InputStream inputStream = socket.getInputStream();
-         final InputStreamReader streamReader = new InputStreamReader(inputStream);
-         BufferedReader br = new BufferedReader(streamReader);
-
+         final BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+         
          out = new PrintWriter(socket.getOutputStream());
 
          Display display = getDisplay();
          display.asyncExec(() -> sendResize(getBounds()));
 
-         Decoder decoder = Base64.getDecoder();
-         String line = null;
-         while (!isDisposed() && (line = br.readLine()) != null)
+         String command = null;
+         while (!isDisposed() && (command = new String(readBytesFromInputStream(bufferedInputStream, 32), "UTF-8")) != null)
          {
-            if (line.startsWith("cursor:"))
+            if (command.startsWith("cursor:"))
             {
-               String type = line.substring("cursor:".length());
+               String type = (command.substring("cursor:".length()).split(","))[0];
                display.asyncExec(() -> setCursor(type));
                continue;
             }
-            int index = line.indexOf(':');
-            if (index > 0)
+            else if (command.startsWith("paint:"))
             {
-               String[] split = line.substring(0, index).split(",");
-               Image image = new Image(display, new ByteArrayInputStream(decoder.decode(line.substring(index + 1))));
+               String[] split = command.substring("paint:".length()).split(",");
                Point point = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+               Image image = new Image(display, new ByteArrayInputStream(readBytesFromInputStream(bufferedInputStream, Integer.parseInt(split[2]))));
                Rectangle bounds = image.getBounds();
                display.asyncExec(() -> { // TODO sync or async?
                   gc.drawImage(image, point.x, point.y);
                   redraw(point.x, point.y, bounds.width, bounds.height, false);
                   image.dispose();
                });
+            }
+            else 
+            {
+               throw new IOException("Invalid command");
             }
          }
       }
@@ -236,7 +238,19 @@ class ElectronBrowserCanvas extends Canvas
          e.printStackTrace();
       }
    }
-
+   
+   private byte[] readBytesFromInputStream(final BufferedInputStream inputStream, final int numberOfBytes) throws IOException
+   {
+      int bytesToRead = numberOfBytes;
+      int bytesRead = 0;
+      byte[] bytes = new byte[numberOfBytes];
+      while (!isDisposed() && bytesToRead > 0 && (bytesRead = inputStream.read(bytes, numberOfBytes - bytesToRead, bytesToRead)) > -1)
+      {
+         bytesToRead -= bytesRead;
+      }
+      return bytes;
+   }
+   
    private void sendMessage(String type, Map<String, String> parameters)
    {
       StringBuilder builder = new StringBuilder();
