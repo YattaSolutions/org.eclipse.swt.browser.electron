@@ -3,18 +3,49 @@ import net from 'net';
 import path from 'path';
 import { BrowseEvent, ResizeEvent } from './events';
 
+let width = 800;
+let height = 600;
+let socket = 'ipcsockettest';
+let args = process.argv;
+if (args.length > 1) {
+	args.shift();
+	args.shift();
+	while (args.length > 0) {
+		const key = args.shift();
+		const value = args.shift();
+		if (!value) {
+			console.log('Missing value for parameter: ' + key);
+			process.exit(-1);
+		}
+		switch (key) {
+			case '-width':
+				width = +value;
+				continue;
+			case '-height':
+				height = +value;
+				continue;
+			case '-socket':
+				socket = value;
+				continue;
+			default:
+				console.log('Unknown parameter: ' + key);
+				process.exit(-1);
+		}
+	}
+}
+
 app.disableHardwareAcceleration();
 
 //let client = net.connect(9090, 'localhost');
-let client = net.connect('\\\\.\\pipe\\ipcsockettest');
+let client = net.connect('\\\\.\\pipe\\' + socket);
 client.setEncoding('utf8');
 
 app.on('ready', () => {
 	console.log('Started Electron');
 
 	const win = new BrowserWindow({
-		width: 800,
-		height: 600,
+		width: width,
+		height: height,
 		show: false,
 		frame: false,
 		//transparent: true,
