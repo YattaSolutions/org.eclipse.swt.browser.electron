@@ -213,6 +213,7 @@ class ElectronBrowserCanvas extends Canvas
                Point point = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                //Image image = new Image(display, new ByteArrayInputStream(readBytesFromInputStream(bufferedInputStream, Integer.parseInt(split[2]))));
                Image image = new Image(display, new PartialInputStream(bufferedInputStream, Integer.parseInt(split[2])));
+               sendMessage("accept", Collections.singletonMap("imageCount", split[3]));
                Rectangle bounds = image.getBounds();
                display.asyncExec(() -> { // TODO sync or async?
                   gc.drawImage(image, point.x, point.y);
