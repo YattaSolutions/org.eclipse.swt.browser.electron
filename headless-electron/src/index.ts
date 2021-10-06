@@ -1,7 +1,11 @@
-import { app, BrowserWindow, KeyboardInputEvent, MouseInputEvent, MouseWheelInputEvent } from 'electron';
+import { app, BrowserWindow, KeyboardInputEvent, MouseInputEvent, MouseWheelInputEvent, Rectangle } from 'electron';
 import net from 'net';
 import path from 'path';
-import { BrowseEvent, ResizeEvent } from './events';
+import { AcceptEvent, BrowseEvent, ResizeEvent } from './events';
+
+let imageToAccept = 0;
+let lastImageAccepted = imageToAccept;
+let lastDirtyRect: Rectangle | undefined = undefined;
 
 let width = 800;
 let height = 600;
@@ -54,9 +58,22 @@ app.on('ready', () => {
 
 	//win.webContents.beginFrameSubscription(true ,(image, dirtyRect) => {
 	win.webContents.on('paint', (event, dirtyRect, image) => {
-		const imageBytes: Buffer = image.crop(dirtyRect).toJPEG(100);
-		writeCommand('paint:' + dirtyRect.x + ',' + dirtyRect.y + ',' + imageBytes.length);
-		client.write(imageBytes);
+		if (lastDirtyRect !== undefined) {
+			const x1 = Math.min(lastDirtyRect.x, dirtyRect.x);
+			const y1 = Math.min(lastDirtyRect.y, dirtyRect.y);
+			const x2 = Math.max(lastDirtyRect.x + lastDirtyRect.width, dirtyRect.x + dirtyRect.width);
+			const y2 = Math.max(lastDirtyRect.y + lastDirtyRect.height, dirtyRect.y + dirtyRect.height);
+			dirtyRect = { x: x1, y: y1, width: x2 - x1, height: y2 - y1 };
+		}
+		if (lastImageAccepted < imageToAccept) {
+			lastDirtyRect = dirtyRect;
+		} else {
+			imageToAccept = (imageToAccept + 1) % 255;
+			lastDirtyRect = undefined;
+			const imageBytes: Buffer = image.crop(dirtyRect).toJPEG(100);
+			writeCommand('paint:' + dirtyRect.x + ',' + dirtyRect.y + ',' + imageBytes.length + ',' + imageToAccept);
+			client.write(imageBytes);
+		}
 	});
 
 	win.webContents.on('cursor-changed', (event, type) => {
@@ -101,6 +118,9 @@ app.on('ready', () => {
 				}
 			} else if (jsonObj?.type == 'quit') {
 				win.close();
+			} else if (jsonObj?.type == 'accept') {
+				let accept = <AcceptEvent> jsonObj;
+				lastImageAccepted = accept.imageCount;
 			} else {
 				if (jsonObj?.type != 'mouseMove') {
 					win.focusOnWebView();
