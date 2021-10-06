@@ -9,9 +9,11 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -256,6 +258,7 @@ class ElectronBrowserCanvas extends Canvas
 
    private void sendMessage(String message)
    {
+      //System.out.println(message);
       if (out != null)
       {
          out.write(message + "\n");
@@ -290,6 +293,25 @@ class ElectronBrowserCanvas extends Canvas
 
    private void handleEvent(String type, MouseEvent e)
    {
+      Map<String, String> params = new LinkedHashMap<>();
+
+      if ((e.stateMask & SWT.BUTTON_MASK) != 0)
+      {
+         List<String> modifiers = new ArrayList<>();
+         if ((e.stateMask & SWT.BUTTON1) != 0)
+         {
+            modifiers.add("\"leftButtonDown\"");
+         }
+         if ((e.stateMask & SWT.BUTTON2) != 0)
+         {
+            modifiers.add("\"middleButtonDown\"");
+         }
+         if ((e.stateMask & SWT.BUTTON3) != 0)
+         {
+            modifiers.add("\"rightButtonDown\"");
+         }
+         params.put("modifiers", "[" + String.join(",", modifiers) + "]");
+      }
       String button;
       switch (e.button)
       {
@@ -307,9 +329,16 @@ class ElectronBrowserCanvas extends Canvas
             break;
       }
       
-      Map<String, String> params = new LinkedHashMap<>();
       params.put("x", Integer.toString(e.x));
       params.put("y", Integer.toString(e.y));
+
+      /*if (oldMouseEvent != null && e.time - oldMouseEvent.time < 1000)
+      {
+         params.put("movementX", Integer.toString(oldMouseEvent.x - e.x));
+         params.put("movementY", Integer.toString(oldMouseEvent.y - e.y));
+      }
+      oldMouseEvent = e;*/
+
       if (button != null) params.put("button", "\"" + button + "\"");
       if (!"mouseWheel".equals(type))
       {

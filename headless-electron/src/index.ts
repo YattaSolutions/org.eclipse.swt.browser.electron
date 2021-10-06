@@ -97,7 +97,7 @@ app.on('ready', () => {
 	//win.loadURL('https://www.google.de');
 	//win.loadURL('https://www.youtube.com');
 
-	//win.webContents.openDevTools(); // do not work in offscreen mode
+	//win.webContents.openDevTools({ mode: 'undocked' });
 
 	//net.createServer(client => {
 	client.on('data', data => {
