@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,6 +41,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.scalasbt.ipcsocket.UnixDomainServerSocket;
 import org.scalasbt.ipcsocket.Win32NamedPipeServerSocket;
 import org.scalasbt.ipcsocket.Win32SecurityLevel;
 
@@ -160,7 +163,20 @@ class ElectronBrowserCanvas extends Canvas
    {
       try
       {
-         server = new Win32NamedPipeServerSocket("\\\\.\\pipe\\ipcsockettest", false, Win32SecurityLevel.LOGON_DACL);
+         boolean win = System.getProperty("os.name", "").toLowerCase().startsWith("win");
+         String socketName;
+         if (win)
+         {
+            socketName = "\\\\.\\pipe\\electron_pipe";
+            server = new Win32NamedPipeServerSocket(socketName, false, Win32SecurityLevel.LOGON_DACL);
+         }
+         else
+         {
+            Path pipe = Files.createTempDirectory("electron_pipe").resolve("electron.pipe");
+            Files.deleteIfExists(pipe);
+            socketName = pipe.toString();
+            server = new UnixDomainServerSocket(socketName, false);
+         }
          //server = new ServerSocket(port);
       }
       catch (IOException e)
@@ -200,6 +216,7 @@ class ElectronBrowserCanvas extends Canvas
 
          Display display = getDisplay();
          display.asyncExec(() -> sendResize(getBounds()));
+         browse("");
 
          String command = null;
          while (!isDisposed() && (command = new String(readBytesFromInputStream(bufferedInputStream, 32), "UTF-8")) != null)
@@ -346,7 +363,7 @@ class ElectronBrowserCanvas extends Canvas
       }
       else
       {
-         params.put("deltaY", Integer.toString(e.count * 10));
+         params.put("deltaY", Integer.toString(e.count * 100 / 3));
       }
       sendMessage(type, params);
    }
