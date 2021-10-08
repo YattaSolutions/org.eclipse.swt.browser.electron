@@ -11,7 +11,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -36,6 +38,8 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
@@ -50,13 +54,22 @@ class ElectronBrowserCanvas extends Canvas
    private Image image;
    private GC gc;
 
+   private Image createImage(int width, int height)
+   {
+      ImageData data = new ImageData(width, height, 32, new PaletteData(0xff0000,0x00ff00, 0x0000ff));
+      data.setAlpha(0, 0, -1);
+      Arrays.fill(data.alphaData, (byte) -1);
+      return new Image(null, data);
+   }
+
    public ElectronBrowserCanvas(Composite parent)
    {
       super(parent, SWT.NO_REDRAW_RESIZE | SWT.DOUBLE_BUFFERED);
 
       Display display = getDisplay();
-      image = new Image(display, display.getBounds().width, display.getBounds().height);
+      image = new Image(null, display.getBounds().width, display.getBounds().height);
       gc = new GC(image);
+      FPSText.initGC(gc);
 
       addControlListener(new ControlListener() {
          @Override
@@ -67,8 +80,9 @@ class ElectronBrowserCanvas extends Canvas
             if (oldBounds.width < newBounds.width || oldBounds.height < newBounds.height)
             {
                image.dispose();
-               image = new Image(e.display, newBounds.width, newBounds.height);
+               image = new Image(null, newBounds.width, newBounds.height);
                gc = new GC(image);
+               FPSText.initGC(gc);
             }
             sendResize(newBounds);
          }
@@ -172,7 +186,8 @@ class ElectronBrowserCanvas extends Canvas
          }
          else
          {
-            Path pipe = Files.createTempDirectory("electron_pipe").resolve("electron.pipe");
+            //Path pipe = Files.createTempDirectory("electron_pipe").resolve("electron.pipe");
+            Path pipe = Files.createDirectories(Paths.get("/tmp/electron_pipe")).resolve("electron.pipe");
             Files.deleteIfExists(pipe);
             socketName = pipe.toString();
             server = new UnixDomainServerSocket(socketName, false);
@@ -218,6 +233,8 @@ class ElectronBrowserCanvas extends Canvas
          display.asyncExec(() -> sendResize(getBounds()));
          browse("");
 
+         FPSText fps = new FPSText();
+
          String command = null;
          while (!isDisposed() && (command = new String(readBytesFromInputStream(bufferedInputStream, 32), "UTF-8")) != null)
          {
@@ -231,14 +248,17 @@ class ElectronBrowserCanvas extends Canvas
                String[] split = command.substring("paint:".length()).split(",");
                Point point = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                //Image image = new Image(display, new ByteArrayInputStream(readBytesFromInputStream(bufferedInputStream, Integer.parseInt(split[2]))));
-               Image image = new Image(display, new PartialInputStream(bufferedInputStream, Integer.parseInt(split[2])));
+               Image newImage = new Image(null, new PartialInputStream(bufferedInputStream, Integer.parseInt(split[2])));
                sendMessage("accept", Collections.singletonMap("imageCount", split[3]));
-               Rectangle bounds = image.getBounds();
+               Rectangle bounds = newImage.getBounds();
                display.asyncExec(() -> { // TODO sync or async?
-                  gc.drawImage(image, point.x, point.y);
+                  gc.drawImage(newImage, point.x, point.y);
+                  fps.drawFPS(gc, this, point.x, point.y, getBounds().width);
+                  gc.drawRectangle(point.x, point.y, bounds.width - 1, bounds.height - 1);
                   redraw(point.x, point.y, bounds.width, bounds.height, false);
-                  image.dispose();
+                  newImage.dispose();
                });
+               fps.calcFPS();
             }
             else 
             {
@@ -370,7 +390,7 @@ class ElectronBrowserCanvas extends Canvas
 
    private void handleEvent(String type, KeyEvent e)
    {
-      System.out.println(e.keyCode);
+      //System.out.println(e.keyCode);
       String keyCode = null;
       if (Character.isLetterOrDigit(e.character) || '@' == e.character || '.' == e.character)
       {

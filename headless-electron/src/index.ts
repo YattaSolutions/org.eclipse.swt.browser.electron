@@ -61,6 +61,10 @@ if (disableHardwareAcceleration) {
 	app.disableHardwareAcceleration();
 }
 
+// fixes scaling problems on MacOS
+app.commandLine.appendSwitch('high-dpi-support', '1');
+app.commandLine.appendSwitch('force-device-scale-factor', '1');
+
 let client = net.connect(socket);
 
 app.on('ready', () => {
@@ -72,7 +76,7 @@ app.on('ready', () => {
 		show: !offscreen,
 		frame: !offscreen,
 		//transparent: true,
-		webPreferences: { offscreen: offscreen }
+		webPreferences: { offscreen: offscreen, spellcheck: false }
 	});
 
 	if (offscreen) {

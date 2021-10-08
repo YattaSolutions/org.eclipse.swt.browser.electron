@@ -6,7 +6,7 @@
 
    <groupId>de.yatta</groupId>
    <artifactId>browser.electron</artifactId>
-   <version>0.0.5-SNAPSHOT</version>
+   <version>0.0.6-SNAPSHOT</version>
 
    <name>de.yatta.browser.electron</name>
    <description>Electron browser in SWT</description>
@@ -16,6 +16,7 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <maven.compiler.source>1.8</maven.compiler.source>
       <maven.compiler.target>1.8</maven.compiler.target>
+      <swt.version>3.117.0</swt.version>
    </properties>
 
    <build>
@@ -47,12 +48,20 @@
 
    <dependencies>
       <dependency>
-         <groupId>org.eclipse.swt</groupId>
+         <groupId>org.eclipse.platform</groupId>
          <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
-         <!-- artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId -->
-         <!-- artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId -->
-         <version>4.3</version>
+         <version>${swt.version}</version>
       </dependency>
+      <!-- dependency>
+         <groupId>org.eclipse.platform</groupId>
+         <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+         <version>${swt.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.eclipse.platform</groupId>
+         <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
+         <version>${swt.version}</version>
+      </dependency-->
       <dependency>
          <groupId>org.scala-sbt.ipcsocket</groupId>
          <artifactId>ipcsocket</artifactId>
