@@ -10,8 +10,8 @@ let lastDirtyRect: Rectangle | undefined = undefined;
 let width = 800;
 let height = 600;
 let socket: string;
-var opsys = process.platform;
-if (opsys === "win32") {
+var os = process.platform;
+if (os === "win32") {
 	socket = '\\\\.\\pipe\\electron_pipe';
 } else {
 	socket = '/tmp/electron_pipe/electron.pipe';
@@ -153,6 +153,7 @@ const writeCommand = (command: string): void => {
 };
 
 const sendImage = (dirtyRect: Rectangle, image: NativeImage): void => {
+	if (dirtyRect.width === 0 || dirtyRect.height === 0) return;
 	if (lastDirtyRect !== undefined) {
 		const x1 = Math.min(lastDirtyRect.x, dirtyRect.x);
 		const y1 = Math.min(lastDirtyRect.y, dirtyRect.y);

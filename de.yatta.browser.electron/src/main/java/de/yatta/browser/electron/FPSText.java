@@ -27,9 +27,11 @@ public class FPSText
       }
    }
    
-   public void drawFPS(GC gc, Composite comp, int x, int y, int width)
+   public void drawFPS(GC gc, Composite comp, int x, int y)
    {
+      if (comp.isDisposed()) return;
       Point textSize = gc.textExtent(fps);
+      int width = comp.getBounds().width;
       int posX = width - textSize.x;
       if ((x > posX && y < textSize.y) || frames == 0);
       {

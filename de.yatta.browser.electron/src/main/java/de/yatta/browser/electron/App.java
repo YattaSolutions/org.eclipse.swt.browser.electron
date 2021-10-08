@@ -12,10 +12,23 @@ public class App
 
    public static void main(String[] args)
    {
-      new App().start();
+      boolean startElectron = true;
+      for (int i = 0; i < args.length; i++)
+      {
+         switch (args[i])
+         {
+            case "-skipStart":
+               startElectron = false;
+               continue;
+            default:
+               System.err.println("Unknown parameter: " + args[i]);
+               System.exit(-1);;
+         }
+      }
+      new App().start(startElectron);
    }
 
-   public void start()
+   public void start(boolean startElectron)
    {
       Display display = new Display();
 
@@ -35,7 +48,7 @@ public class App
       GridData layoutData1 = new GridData(SWT.FILL, SWT.CENTER, true, false);
       addressBar.setLayoutData(layoutData1);
 
-      ElectronBrowserCanvas canvas = new ElectronBrowserCanvas(shell);
+      ElectronBrowserCanvas canvas = new ElectronBrowserCanvas(shell, startElectron);
       GridData layoutData2 = new GridData(SWT.FILL, SWT.FILL, true, true);
       canvas.setLayoutData(layoutData2);
 

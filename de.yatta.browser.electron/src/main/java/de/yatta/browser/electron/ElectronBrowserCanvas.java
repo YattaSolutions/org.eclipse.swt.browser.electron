@@ -57,17 +57,23 @@ class ElectronBrowserCanvas extends Canvas
    private Image createImage(int width, int height)
    {
       ImageData data = new ImageData(width, height, 32, new PaletteData(0xff0000,0x00ff00, 0x0000ff));
-      data.setAlpha(0, 0, -1);
+      data.setAlpha(0, 0, 0);
       Arrays.fill(data.alphaData, (byte) -1);
+      Arrays.fill(data.data, (byte) -1);
       return new Image(null, data);
    }
 
    public ElectronBrowserCanvas(Composite parent)
    {
-      super(parent, SWT.NO_REDRAW_RESIZE | SWT.DOUBLE_BUFFERED);
+      this(parent, true);
+   }
+
+   public ElectronBrowserCanvas(Composite parent, boolean startElectron)
+   {
+      super(parent, SWT.NO_REDRAW_RESIZE | SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
 
       Display display = getDisplay();
-      image = new Image(null, display.getBounds().width, display.getBounds().height);
+      image = createImage(display.getBounds().width, display.getBounds().height);
       gc = new GC(image);
       FPSText.initGC(gc);
 
@@ -80,7 +86,7 @@ class ElectronBrowserCanvas extends Canvas
             if (oldBounds.width < newBounds.width || oldBounds.height < newBounds.height)
             {
                image.dispose();
-               image = new Image(null, newBounds.width, newBounds.height);
+               image = createImage(newBounds.width, newBounds.height);
                gc = new GC(image);
                FPSText.initGC(gc);
             }
@@ -245,20 +251,21 @@ class ElectronBrowserCanvas extends Canvas
             }
             else if (command.startsWith("paint:"))
             {
+               //System.out.println(command);
                String[] split = command.substring("paint:".length()).split(",");
                Point point = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                //Image image = new Image(display, new ByteArrayInputStream(readBytesFromInputStream(bufferedInputStream, Integer.parseInt(split[2]))));
                Image newImage = new Image(null, new PartialInputStream(bufferedInputStream, Integer.parseInt(split[2])));
-               sendMessage("accept", Collections.singletonMap("imageCount", split[3]));
                Rectangle bounds = newImage.getBounds();
-               display.asyncExec(() -> { // TODO sync or async?
-                  gc.drawImage(newImage, point.x, point.y);
-                  fps.drawFPS(gc, this, point.x, point.y, getBounds().width);
-                  gc.drawRectangle(point.x, point.y, bounds.width - 1, bounds.height - 1);
+               gc.drawImage(newImage, point.x, point.y);
+               newImage.dispose();
+               gc.drawRectangle(point.x, point.y, bounds.width - 1, bounds.height - 1);
+               display.syncExec(() -> { // TODO sync or async?
+                  fps.drawFPS(gc, this, point.x, point.y);
                   redraw(point.x, point.y, bounds.width, bounds.height, false);
-                  newImage.dispose();
                });
                fps.calcFPS();
+               sendMessage("accept", Collections.singletonMap("imageCount", split[3]));
             }
             else 
             {
