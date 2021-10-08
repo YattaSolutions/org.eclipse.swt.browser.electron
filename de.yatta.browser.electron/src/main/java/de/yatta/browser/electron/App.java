@@ -56,7 +56,7 @@ public class App
          if (event.detail == SWT.TRAVERSE_RETURN)
          {
             String text = addressBar.getText();
-            if (!text.startsWith("http"))
+            if (!text.startsWith("http") && !text.isEmpty())
             {
                text = "http://" + text;
                addressBar.setText(text);
