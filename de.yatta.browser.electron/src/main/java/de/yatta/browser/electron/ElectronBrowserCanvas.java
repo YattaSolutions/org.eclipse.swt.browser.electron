@@ -174,7 +174,10 @@ class ElectronBrowserCanvas extends Canvas
          listen(9090);
       }).start();
 
-      unzipAndStartElectron();
+      if (startElectron)
+      {
+         unzipAndStartElectron();
+      }
    }
 
    private ServerSocket server;
@@ -260,7 +263,9 @@ class ElectronBrowserCanvas extends Canvas
                gc.drawImage(newImage, point.x, point.y);
                newImage.dispose();
                gc.drawRectangle(point.x, point.y, bounds.width - 1, bounds.height - 1);
+               if (isDisposed()) break;
                display.syncExec(() -> { // TODO sync or async?
+                  if (isDisposed()) return;
                   fps.drawFPS(gc, this, point.x, point.y);
                   redraw(point.x, point.y, bounds.width, bounds.height, false);
                });

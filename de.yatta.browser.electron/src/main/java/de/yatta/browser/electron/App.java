@@ -55,7 +55,13 @@ public class App
       addressBar.addListener(SWT.Traverse, event -> {
          if (event.detail == SWT.TRAVERSE_RETURN)
          {
-            canvas.browse(addressBar.getText());
+            String text = addressBar.getText();
+            if (!text.startsWith("http"))
+            {
+               text = "http://" + text;
+               addressBar.setText(text);
+            }
+            canvas.browse(text);
          }
       });
 
