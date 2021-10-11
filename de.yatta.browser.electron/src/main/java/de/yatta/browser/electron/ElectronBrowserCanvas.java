@@ -76,8 +76,9 @@ class ElectronBrowserCanvas extends Canvas
       image = createImage(display.getBounds().width, display.getBounds().height);
       gc = new GC(image);
       FPSText.initGC(gc);
+      setSize(1500, 1000);
 
-      addControlListener(new ControlListener() {
+      /*addControlListener(new ControlListener() {
          @Override
          public void controlResized(ControlEvent e)
          {
@@ -97,7 +98,7 @@ class ElectronBrowserCanvas extends Canvas
          public void controlMoved(ControlEvent e)
          {
          }
-      });
+      });*/
 
       addPaintListener(new PaintListener() {
          @Override
@@ -107,7 +108,7 @@ class ElectronBrowserCanvas extends Canvas
          }
       });
 
-      addMouseListener(new MouseListener() {
+      /*addMouseListener(new MouseListener() {
          @Override
          public void mouseUp(MouseEvent e)
          {
@@ -168,16 +169,16 @@ class ElectronBrowserCanvas extends Canvas
                   "   \"type\":\"quit\"\n" + "}");
             if (process != null) process.destroy();
          }
-      });
+      });*/
 
       new Thread(() -> {
          listen(9090);
       }).start();
 
-      if (startElectron)
+      /*if (startElectron)
       {
          unzipAndStartElectron();
-      }
+      }*/
    }
 
    private ServerSocket server;
@@ -232,11 +233,11 @@ class ElectronBrowserCanvas extends Canvas
       try
       {
          System.out.println("Open connection");
-         final Socket socket = server.accept();
+         /*final Socket socket = server.accept();
          final InputStream inputStream = socket.getInputStream();
          final BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
          
-         out = new PrintWriter(socket.getOutputStream());
+         out = new PrintWriter(socket.getOutputStream());*/
 
          Display display = getDisplay();
          display.asyncExec(() -> sendResize(getBounds()));
@@ -245,20 +246,26 @@ class ElectronBrowserCanvas extends Canvas
          FPSText fps = new FPSText();
 
          String command = null;
-         while (!isDisposed() && (command = new String(readBytesFromInputStream(bufferedInputStream, 32), "UTF-8")) != null)
+         while (!isDisposed()) //(command = new String(readBytesFromInputStream(bufferedInputStream, 32), "UTF-8")) != null)
          {
-            if (command.startsWith("cursor:"))
+            /*if (command.startsWith("cursor:"))
             {
                String type = (command.substring("cursor:".length()).split(","))[0];
                display.asyncExec(() -> setCursor(type));
             }
             else if (command.startsWith("paint:"))
-            {
+            {*/
                //System.out.println(command);
-               String[] split = command.substring("paint:".length()).split(",");
+               /*String[] split = command.substring("paint:".length()).split(",");
                Point point = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                //Image image = new Image(display, new ByteArrayInputStream(readBytesFromInputStream(bufferedInputStream, Integer.parseInt(split[2]))));
-               Image newImage = new Image(null, new PartialInputStream(bufferedInputStream, Integer.parseInt(split[2])));
+               Image newImage = new Image(null, new PartialInputStream(bufferedInputStream, Integer.parseInt(split[2])));*/
+               Point point = new Point(0, 0);
+               ImageData data = new ImageData(1500, 1000, 24, new PaletteData(0xff0000,0x00ff00, 0x0000ff));
+               data.setAlpha(0, 0, 0);
+               Arrays.fill(data.alphaData, (byte) -1);
+               Arrays.fill(data.data, (byte) (Math.random() * 255));
+               Image newImage = new Image(null, data);
                Rectangle bounds = newImage.getBounds();
                gc.drawImage(newImage, point.x, point.y);
                newImage.dispose();
@@ -270,15 +277,15 @@ class ElectronBrowserCanvas extends Canvas
                   redraw(point.x, point.y, bounds.width, bounds.height, false);
                });
                fps.calcFPS();
-               sendMessage("accept", Collections.singletonMap("imageCount", split[3]));
-            }
+               //sendMessage("accept", Collections.singletonMap("imageCount", split[3]));
+            /*}
             else 
             {
                throw new IOException("Invalid command");
-            }
+            }*/
          }
       }
-      catch (IOException e)
+      catch (/*IO*/Exception e)
       {
          out = null;
          System.err.println("Error: " + port);

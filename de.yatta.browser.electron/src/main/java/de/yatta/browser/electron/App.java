@@ -65,6 +65,7 @@ public class App
          }
       });
 
+      shell.setSize(1600, 1100);
 
       shell.open();
       while (!shell.isDisposed())
