@@ -1,7 +1,8 @@
 [![License](https://img.shields.io/badge/License-EPL%202.0-blue.svg)](LICENSE)
 
 # Electron for SWT
-**Chromium browser integration for SWT based on Electron
+**Chromium browser integration for SWT based on Electron**
+
 This prototype provides an integration of Electron in SWT. It is the first step on the journey to a modern browser for the Eclipse IDE.
 
 # Modern browser in Eclipse
