@@ -34,7 +34,6 @@ public class App
 
       Shell shell = new Shell(display);
       shell.setText("Electron in SWT");
-      //shell.setLayout(new FillLayout());
 
       GridLayout layout = new GridLayout(1, false);
       layout.marginHeight = 0;

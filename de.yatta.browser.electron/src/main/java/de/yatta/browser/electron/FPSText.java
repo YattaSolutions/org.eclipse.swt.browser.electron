@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class FPSText
 {
-   long start = System.currentTimeMillis();
+   private long start = System.currentTimeMillis();
    private long frames = 0;
    private String fps = "";
 
@@ -17,11 +17,9 @@ public class FPSText
    {
       long end = System.currentTimeMillis();
       frames++;
-      //if (frames++ > 60)
       if (end - start > 1000)
       {
          fps = "FPS: " + String.format("%.2f", frames / ((end - start) / 1000.0));
-         //System.out.println(fps);
          frames = 0;
          start = end;
       }

@@ -171,7 +171,7 @@ class ElectronBrowserCanvas extends Canvas
       });
 
       new Thread(() -> {
-         listen(9090);
+         listen();
       }).start();
 
       if (startElectron)
@@ -182,7 +182,7 @@ class ElectronBrowserCanvas extends Canvas
 
    private ServerSocket server;
 
-   private void listen(int port)
+   private void listen()
    {
       try
       {
@@ -201,18 +201,18 @@ class ElectronBrowserCanvas extends Canvas
             socketName = pipe.toString();
             server = new UnixDomainServerSocket(socketName, false);
          }
-         //server = new ServerSocket(port);
+         //server = new ServerSocket(9090);
       }
       catch (IOException e)
       {
-         System.err.println("Could not open port " + port);
+         System.err.println("Could not open socket.");
          System.exit(-1);
       }
 
       new Thread(() -> {
          while (!isDisposed())
          {
-            run(port);
+            run();
             try
             {
                Thread.sleep(100);
@@ -227,7 +227,7 @@ class ElectronBrowserCanvas extends Canvas
 
    private PrintWriter out;
 
-   private void run(int port)
+   private void run()
    {
       try
       {
@@ -254,20 +254,18 @@ class ElectronBrowserCanvas extends Canvas
             }
             else if (command.startsWith("paint:"))
             {
-               //System.out.println(command);
                String[] split = command.substring("paint:".length()).split(",");
                Point point = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-               //Image image = new Image(display, new ByteArrayInputStream(readBytesFromInputStream(bufferedInputStream, Integer.parseInt(split[2]))));
                Image newImage = new Image(null, new PartialInputStream(bufferedInputStream, Integer.parseInt(split[2])));
                Rectangle bounds = newImage.getBounds();
-               gc.drawImage(newImage, point.x, point.y);
-               newImage.dispose();
-               gc.drawRectangle(point.x, point.y, bounds.width - 1, bounds.height - 1);
                if (isDisposed()) break;
                display.syncExec(() -> { // TODO sync or async?
                   if (isDisposed()) return;
+                  gc.drawImage(newImage, point.x, point.y);
                   fps.drawFPS(gc, this, point.x, point.y);
+                  //gc.drawRectangle(point.x, point.y, bounds.width - 1, bounds.height - 1);
                   redraw(point.x, point.y, bounds.width, bounds.height, false);
+                  newImage.dispose();
                });
                fps.calcFPS();
                sendMessage("accept", Collections.singletonMap("imageCount", split[3]));
@@ -281,7 +279,7 @@ class ElectronBrowserCanvas extends Canvas
       catch (IOException e)
       {
          out = null;
-         System.err.println("Error: " + port);
+         System.err.println("Error: " + e.getMessage());
          e.printStackTrace();
       }
    }
@@ -307,24 +305,11 @@ class ElectronBrowserCanvas extends Canvas
 
    private void sendMessage(String message)
    {
-      //System.out.println(message);
       if (out != null)
       {
          out.write(message + "\n");
          out.flush();
       }
-      /*try
-      {
-         Socket sock = new Socket("localhost", 9091);
-         PrintWriter out = new PrintWriter(sock.getOutputStream());
-         out.write(message + "\n");
-         out.flush();
-         sock.close();
-      }
-      catch (IOException e)
-      {
-         e.printStackTrace();
-      }*/
    }
    
    public void browse(String url)
@@ -402,7 +387,6 @@ class ElectronBrowserCanvas extends Canvas
 
    private void handleEvent(String type, KeyEvent e)
    {
-      //System.out.println(e.keyCode);
       String keyCode = null;
       if (Character.isLetterOrDigit(e.character) || '@' == e.character || '.' == e.character)
       {
@@ -496,7 +480,7 @@ class ElectronBrowserCanvas extends Canvas
       if (cursorMapping == null)
       {
          cursorMapping = new HashMap<>();
-         // col-resize, row-resize, m-panning, e-panning, n-panning, ne-panning, nw-panning, s-panning, se-panning, sw-panning, w-panning, move, vertical-text, cell, context-menu, alias, progress, nodrop, copy, not-allowed, zoom-in, zoom-out, grab, grabbing
+         // TODO col-resize, row-resize, m-panning, e-panning, n-panning, ne-panning, nw-panning, s-panning, se-panning, sw-panning, w-panning, move, vertical-text, cell, context-menu, alias, progress, nodrop, copy, not-allowed, zoom-in, zoom-out, grab, grabbing
          cursorMapping.put("default", SWT.CURSOR_ARROW);
          cursorMapping.put("crosshair", SWT.CURSOR_CROSS);
          cursorMapping.put("pointer", SWT.CURSOR_HAND);
@@ -534,13 +518,14 @@ class ElectronBrowserCanvas extends Canvas
    
    private void unzipAndStartElectron()
    {
-      File tempDir = new File(System.getProperty("java.io.tmpdir") + File.separator + "headless-electron"); // TODO unzip to AppData (see Launcher)
+      File tempDir = new File(System.getProperty("java.io.tmpdir") + File.separator + "headless-electron"); // TODO unzip to AppData
       if(!tempDir.exists())
       {
          tempDir.mkdirs();
       }
       try
       {
+         // TODO add Linux and Mac
          unzip(getClass().getResourceAsStream("/headless-electron-win32-x64-0.0.1.zip"), tempDir);
          ProcessBuilder processBuilder = new ProcessBuilder(tempDir + File.separator + "headless-electron.exe");
          process = processBuilder.start();
