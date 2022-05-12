@@ -21,7 +21,7 @@ We use Electron (started via a small node.js script) to render a given website. 
 
 Interaction (like keystrokes) are send back to the Electron process. Such hard decoupling eliminates common issues caused by running Chromium and SWT in the same process.
 
-Currently the communication between Electron and SWT process is done via socket communication. Maybe that could be changed to shared memory in future.
+Currently the communication between the Electron and SWT processes is done via socket communication. Maybe that could be changed to shared memory in future.
 
 ![Architecture of Electron approach](doc/architecture.svg)
 
