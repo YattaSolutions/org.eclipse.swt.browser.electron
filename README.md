@@ -40,15 +40,15 @@ Using software rendering has potential drawbacks
 - Reduces possible framerate
 - WebGL and 3D CSS animations are not supported
 
-GPU acceleration would be supported by the Electron offscreen rendering if really needed, but make things even slower, since then content is rendered on GPU, copied to memory transfered to the SWT process and the displayed. That reduces the framerate even more.
+GPU acceleration would be supported by the Electron offscreen rendering if really needed. But this would make things even slower, since then content is rendered on GPU, copied to memory transfered to the SWT process and the displayed. That reduces the framerate even more.
 
-But in our opinion it should work good for most Eclipse plugins like e.g., MPC.
+But in our opinion the suggested solution should work good for most Eclipse plugins like e.g., MPC.
 
 Also using Electron not only introduces a dependency to Chromium but also to node.js. That would require even more security updates. We believe that those could be easily done automatically.
 
 ### Known issues
 
-[Issues with SWT and retina displays for Mac](https://bugs.eclipse.org/bugs/show_bug.cgi?id=576761)
+- [Issues with SWT and retina displays for Mac](https://bugs.eclipse.org/bugs/show_bug.cgi?id=576761)
 
 ## Tech stack and credits
 
