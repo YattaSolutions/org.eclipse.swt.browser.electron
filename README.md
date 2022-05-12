@@ -17,7 +17,7 @@ Open ecosystems like Eclipse play a major role in providing developers an indepe
 
 ### Approach
 
-We use Electron (with a small node.js script) to render a given website. We are using the electron [offscreen rendering mode](https://www.electronjs.org/docs/latest/tutorial/offscreen-rendering), here. The resulting image is then transfered via IPC to an SWT process where it is finally displayed. Dirty regions are supported to speed-up the transfer.
+We use Electron (started via a small node.js script) to render a given website. We are using the electron [offscreen rendering mode](https://www.electronjs.org/docs/latest/tutorial/offscreen-rendering), here. The resulting image is then transfered via IPC to an SWT process where it is finally displayed. Dirty regions are supported to speed-up the transfer.
 
 Interaction (like keystrokes) are send back to the Electron process. Such hard decoupling eliminates common issues caused by running Chromium and SWT in the same process.
 
