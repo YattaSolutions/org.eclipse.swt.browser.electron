@@ -11,7 +11,7 @@
     "make": "electron-forge make"
   },
   "author": "Yatta Solutions GmbH",
-  "license": "UNLICENSED",
+  "license": "EPL-2.0",
   "dependencies": {
     "typescript": "^4.4.3"
   },
