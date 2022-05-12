@@ -7,7 +7,6 @@
 This prototype provides an integration of Electron in SWT. It is the first step on the journey to a modern browser for the Eclipse IDE. The integration in Eclipse is currently in [heavy development](https://github.com/YattaSolutions/org.eclipse.swt.browser.electron/issues). <br>
 We're happy about any [contribution, feedback or chat](#Contributing).
 
-
 ![Eclipse IDE displaying a running embedded chromium instance](doc/screenshot.png)
 
 # Modern browser in Eclipse
@@ -23,6 +22,8 @@ We use Electron (with a small node.js script) to render a given website. We are 
 Interaction (like keystrokes) are send back to the Electron process. Such hard decoupling eliminates common issues caused by running Chromium and SWT in the same process.
 
 Currently the communication between Electron and SWT process is done via socket communication. Maybe that could be changed to shared memory in future.
+
+![Architecture of Electron approach](doc/architecture.svg)
 
 ### Opportunities
 
