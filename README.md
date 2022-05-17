@@ -39,7 +39,7 @@ Proceeding with this approach requires that we're aware of the following:
 1. Using software rendering may reduce the possible framerate, and WebGL and 3D CSS animations are not supported
 2. Using Electron introduces dependencies to Chromium and node.js, making more security updates necessary.
 
-In our experience, software rendering is still the best solution and should work well for most Eclipse plugins, such as the MPC. Alternative solutions like GPU-accelerated offscreen rendering would reduce the framerate even further.
+In our experience, software rendering is still the best solution and should work well for most Eclipse plugins, such as the [Eclipse Marketplace Client](https://projects.eclipse.org/projects/technology.packaging.mpc). Alternative solutions like GPU-accelerated offscreen rendering would reduce the framerate even further.
 
 The Chromium and node.js updates could easily be done automatically.
 
@@ -85,7 +85,7 @@ java -jar target/browser.electron-0.0.6-SNAPSHOT-jar-with-dependencies.jar
 
 ## License
 
-_Electron for SWT_ is open sourced under the [Eclipse Public License 2.0](https://www.eclipse.org/legal/epl-2.0/).
+_Electron for SWT_ is open sourced under the [Eclipse Public License 2.0](https://www.eclipse.org/legal/epl-2.0/). The project is not yet part of SWT or an official Eclipse project. Anyhow, we are planning to contribute it to Eclipse once the integration is completed.
 
 ## Contributing
 
