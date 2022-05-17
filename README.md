@@ -33,18 +33,15 @@ The current approach is rather simple, and therefore easy to maintain and integr
 
 Moreover, having an embedded Chrome browser of the same version for every operating system also enables developers to develop and test with little overhead. We will benefit from frequent Chromium updates (via Electron), so we ensure future-proof technology with every new release cycle.
 
-### Possible drawbacks
+### Considerations
 
-Using software rendering has potential drawbacks:
+Proceeding with this approach requires that we're aware of the following:
+1. Using software rendering may reduce the possible framerate, and WebGL and 3D CSS animations are not supported
+2. Using Electron introduces dependencies to Chromium and node.js, making more security updates necessary.
 
-- Reduces possible framerate
-- WebGL and 3D CSS animations are not supported
+In our experience, software rendering is still the best solution and should work well for most Eclipse plugins, such as the MPC. Alternative solutions like GPU-accelerated offscreen rendering would reduce the framerate even further.
 
-GPU acceleration would be supported by the Electron offscreen rendering if really needed. But this would make things even slower, since content is then rendered on the GPU, copied to memory, transferred to the SWT process and then displayed. This further reduces the framerate.
-
-But in our opinion the suggested solution should work well for most Eclipse plugins, such as the MPC.
-
-Additionally, using Electron not only introduces a dependency to Chromium but also to node.js. This would require even more security updates. However, we believe those could easily be done automatically.
+The security updates could easily be done automatically.
 
 ### Known issues
 
