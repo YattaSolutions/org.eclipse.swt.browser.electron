@@ -27,7 +27,7 @@ Currently, communication between the Electron and the SWT process is done via so
 
 ### Opportunities
 
-Overall, providing modern web technology has leverage for many other Eclipse projects, such as the [Eclipse Marketplace](https://projects.eclipse.org/projects/technology.packaging.mpc).
+Overall, providing modern web technology has leverage for many other Eclipse projects, such as the [Eclipse Marketplace Client (MPC)](https://projects.eclipse.org/projects/technology.packaging.mpc).
 
 The current approach is rather simple, and therefore easy to maintain and integrates easily in SWT.
 
@@ -39,7 +39,7 @@ Proceeding with this approach requires that we're aware of the following:
 1. Using software rendering may reduce the possible framerate, and WebGL and 3D CSS animations are not supported
 2. Using Electron introduces dependencies to Chromium and node.js, making more security updates necessary.
 
-In our experience, software rendering is still the best solution and should work well for most Eclipse plugins, such as the [Eclipse Marketplace Client](https://projects.eclipse.org/projects/technology.packaging.mpc). Alternative solutions like GPU-accelerated offscreen rendering would reduce the framerate even further.
+In our experience, software rendering is still the best solution and should work well for most Eclipse plugins, such as the [MPC](https://projects.eclipse.org/projects/technology.packaging.mpc). Alternative solutions like GPU-accelerated offscreen rendering would reduce the framerate even further.
 
 The Chromium and node.js updates could easily be done automatically.
 
