@@ -41,7 +41,7 @@ Proceeding with this approach requires that we're aware of the following:
 
 In our experience, software rendering is still the best solution and should work well for most Eclipse plugins, such as the MPC. Alternative solutions like GPU-accelerated offscreen rendering would reduce the framerate even further.
 
-The security updates could easily be done automatically.
+The Chromium and node.js updates could easily be done automatically.
 
 ### Known issues
 
