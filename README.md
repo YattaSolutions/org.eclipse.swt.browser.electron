@@ -85,7 +85,7 @@ java -jar target/browser.electron-0.0.6-SNAPSHOT-jar-with-dependencies.jar
 
 ## License
 
-_Electron for SWT_ is open sourced under the [Eclipse Public License 2.0](https://www.eclipse.org/legal/epl-2.0/). The project is not yet part of SWT or an official Eclipse project. Anyhow, we are planning to contribute it to Eclipse once the integration is completed.
+_Electron for SWT_ is open sourced under the [Eclipse Public License 2.0](https://www.eclipse.org/legal/epl-2.0/). This is not yet an official Eclipse project or part of SWT, but once the integration is complete we plan to submit it to the Eclipse Foundation as a project.
 
 ## Contributing
 
