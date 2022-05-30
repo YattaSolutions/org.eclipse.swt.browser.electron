@@ -4,8 +4,8 @@
 
 **Chromium browser integration for SWT based on Electron**
 
-This prototype provides an integration of Electron in SWT. It is the first step on the journey to a modern browser for the Eclipse IDE. The integration in Eclipse is currently in [heavy development](https://github.com/YattaSolutions/org.eclipse.swt.browser.electron/issues). <br>
-We're happy about any [contributions or feedback—even if you just want to chat](#Contributing).
+This prototype provides an integration of Electron in SWT. Getting an Electron-based browser into SWT is the first step towards an updated web front-end experience provided to the Eclipse IDE and its various plugins. The integration in Eclipse is currently in [development](https://github.com/YattaSolutions/org.eclipse.swt.browser.electron/issues). <br>
+If you want to help, we welcome all [contributions and feedback—and we're happy to tell you more about the project](#Contributing).
 
 ![Eclipse IDE displaying a running embedded chromium instance](doc/screenshot.png)
 
