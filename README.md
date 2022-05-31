@@ -90,4 +90,4 @@ _Electron for SWT_ is open sourced under the [Eclipse Public License 2.0](https:
 
 ## Contributing
 
-Every contribution brings us closer to a better user experience with the Eclipse IDE. Please feel free to contribute through issues, pull request or by getting in touch with us directly at opensource@yatta.de.
+Every contribution brings us closer to a better user experience with the Eclipse IDE. Please feel free to contribute through issues, pull request or by getting in touch with us directly at support@yatta.de.
