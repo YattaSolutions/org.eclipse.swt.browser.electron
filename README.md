@@ -14,7 +14,7 @@ If you want to help, we welcome all [contributions and feedback—and we're happ
 
 ### Challenge
 
-Open ecosystems like Eclipse play a major role in providing developers an independent and open environment to build software. Although the Eclipse IDE is a great and flexible solution for software development, one thing bothers us (and others): The current version of Eclipse uses operating system dependent, outdated browser technologies. This issue was already brought up and discussed by the [Bugzilla community](https://bugs.eclipse.org/bugs/show_bug.cgi?id=405031).
+Open ecosystems like Eclipse play a major role in providing developers an independent and open environment to build software. Although the Eclipse IDE is a great and flexible solution for software development, one thing bothers us (and others): The current version of Eclipse uses operating system dependent, outdated browser technologies. This issue was already brought up and discussed by the [Eclipse community](https://bugs.eclipse.org/bugs/show_bug.cgi?id=405031).
 
 ### Approach
 
