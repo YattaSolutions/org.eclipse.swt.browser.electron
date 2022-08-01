@@ -163,11 +163,11 @@ const sendImage = (dirtyRect: Rectangle, image: NativeImage): void => {
 	}
 	if (lastImageAccepted != imageToAccept) {
 		lastDirtyRect = dirtyRect;
-	} else {
+	} // else {
 		imageToAccept = (imageToAccept + 1) % 255;
 		lastDirtyRect = undefined;
 		const imageBytes: Buffer = image.crop(dirtyRect).toJPEG(100);
 		writeCommand('paint:' + dirtyRect.x + ',' + dirtyRect.y + ',' + imageBytes.length + ',' + imageToAccept);
 		client.write(imageBytes);
-	}
+	//}
 };
