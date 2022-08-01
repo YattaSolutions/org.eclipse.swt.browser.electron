@@ -84,6 +84,22 @@ mvn package
 java -jar target/browser.electron-0.0.6-SNAPSHOT-jar-with-dependencies.jar
 ```
 
+### How to start for debugging
+
+You can also start the Electron process manually for debugging purposes (or on Mac since it currently does not start there).
+
+```bash
+# build and start Java process without starting Electron
+cd de.yatta.browser.electron
+mvn package
+java -jar target/browser.electron-0.0.6-SNAPSHOT-jar-with-dependencies.jar -skipStart
+
+# in second shell start Electron process
+cd headless-electron
+npm install
+npm start
+```
+
 ## License
 
 _Electron for SWT_ is open sourced under the [Eclipse Public License 2.0](https://www.eclipse.org/legal/epl-2.0/). This is not yet an official Eclipse project or part of SWT, but once the integration is complete we plan to submit it to the Eclipse Foundation as a project.
