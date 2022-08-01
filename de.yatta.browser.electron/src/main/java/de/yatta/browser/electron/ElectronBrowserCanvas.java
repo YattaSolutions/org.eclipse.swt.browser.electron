@@ -388,7 +388,7 @@ class ElectronBrowserCanvas extends Canvas
    private void handleEvent(String type, KeyEvent e)
    {
       String keyCode = null;
-      if (Character.isLetterOrDigit(e.character) || '@' == e.character || '.' == e.character)
+      if (Character.isLetterOrDigit(e.character))
       {
          keyCode = Character.toString(e.character);
       }
@@ -413,6 +413,10 @@ class ElectronBrowserCanvas extends Canvas
             case 32:
                keyCode = "Space";
                c = " ";
+               break;
+            case 50:
+               keyCode = "\\\"";
+               c = keyCode;
                break;
             case SWT.ARROW_UP:
                keyCode = "Up";
@@ -439,11 +443,39 @@ class ElectronBrowserCanvas extends Canvas
                keyCode = "End";
                break;
             case SWT.KEYPAD_ADD:
-               keyCode = "Plus";
+               keyCode = "numadd";
                c = "+";
+               break;
+            case SWT.KEYPAD_SUBTRACT:
+               keyCode = "numsub";
+               c = "-";
+               break;
+            case SWT.KEYPAD_MULTIPLY:
+               keyCode = "nummult";
+               c = "*";
+               break;
+            case SWT.KEYPAD_DIVIDE:
+               keyCode = "numdiv";
+               c = "/";
+               break;
+            case SWT.KEYPAD_DECIMAL:
+               keyCode = "numdec";
+               c = ",";
                break;
             case SWT.KEYPAD_CR:
                keyCode = "Enter";
+               break;
+            case SWT.KEYPAD_0:
+            case SWT.KEYPAD_1:
+            case SWT.KEYPAD_2:
+            case SWT.KEYPAD_3:
+            case SWT.KEYPAD_4:
+            case SWT.KEYPAD_5:
+            case SWT.KEYPAD_6:
+            case SWT.KEYPAD_7:
+            case SWT.KEYPAD_8:
+            case SWT.KEYPAD_9:
+               keyCode = "num" + (e.keyCode - SWT.KEYPAD_0);
                break;
             case SWT.F1:
             case SWT.F2:
@@ -460,9 +492,15 @@ class ElectronBrowserCanvas extends Canvas
                keyCode = "F" + (e.keyCode - SWT.F1 + 1);
                break;
             default:
-               return;
+               break;
          }
-         if ("char".equals(type))
+         if (keyCode == null)
+         {
+            if (e.character == 0)
+               return;
+            keyCode = Character.toString(e.character);
+         }
+         else if ("char".equals(type))
          {
             if (c == null)
                return;
